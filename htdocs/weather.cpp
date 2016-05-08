@@ -357,23 +357,6 @@ color: #3385ff;\
        }
        cout<<"</div> </div> <body> </html>"<<endl;
       
-       string host = "127.0.0.1";
-       string user = "root";
-       string passwd = "WKyun123456";
-       string db = "Tianqi_info";
-
-       sql_connecter conn(host,user,passwd,db);
-       conn.begin_connect();
-       string t=weather_data[0].name;
-       string lf="'";
-       string rf="'";
-       string d=",";
-       string nn="xian";
-       string inf="ha";
-       //string data="'xian','ha'";
-string data =lf+t+rf+d+lf+weather_data[0].date[0]+t+weather_data[0].weather[0]+weather_data[0].low_degree[0]+weather_data[0].high_degree[0]+rf; 
-       conn.insert_sql(data);
-       conn.close_connect();
-    exit(0);  
+    return 0;  
 }        
          

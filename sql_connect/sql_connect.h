@@ -13,7 +13,7 @@ class sql_connecter{
 		//connect remote mysql
 		bool begin_connect();
 		bool insert_sql(const std::string &data);
-		bool select_sql(std::string [],std::string _out_str[][5], int &_out_row);
+bool select_sql(std::string &field_name,std::string &data,std::string &cityname);
 
 		//bool updata_sql();
 		//bool delete_sql();

@@ -16,10 +16,10 @@ sql_connecter::sql_connecter(const std::string &_host,\
 bool sql_connecter::begin_connect()
 {
 	if( mysql_real_connect(mysql_base, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), 3306, NULL, 0) == NULL){
-		std::cerr<<"connect error"<<std::endl;
+//		std::cerr<<"connect error"<<std::endl;
 		return false;
 	}else{
-		std::cout<<"connect done..."<<std::endl;
+//		std::cout<<"connect done..."<<std::endl;
 	}
 	return true;
 }
@@ -27,38 +27,34 @@ bool sql_connecter::begin_connect()
 bool sql_connecter::close_connect()
 {
 	mysql_close(mysql_base);
-	std::cout<<"connect close..."<<std::endl;
+	//std::cout<<"connect close..."<<std::endl;
     return true;
 }
 
-bool sql_connecter::select_sql(std::string field_name[],std::string _out_data[][5], int &_out_row)
+bool sql_connecter::select_sql(std::string &field_name,std::string &data,std::string &cityname)
 {
-	std::string sql = "SELECT * FROM student";
+	std::string sql = "SELECT info from tianqi where cityname='";
+    sql+=cityname;
+    sql+="'";
+    //std::cout<<sql<<std::endl;
 	if(mysql_query(mysql_base, sql.c_str()) == 0){
-		//std::cout<<"query success!"<<std::endl;
+	//	std::cout<<"query success!"<<std::endl;
 	}else{
-		//std::cerr<<"query failed!"<<std::endl;
+	//	std::cerr<<"query failed!"<<std::endl;
 	}
 	res = mysql_store_result(mysql_base);
 	int row_num = mysql_num_rows(res);
 	int field_num = mysql_num_fields(res);
-	_out_row = row_num;
 
+     //std::cout<<row_num<<field_num<<std::endl;
 	MYSQL_FIELD *fd = NULL;
-	int i = 0;
-	for(; fd = mysql_fetch_field(res); ){
-		field_name[i++] = fd->name;
-	}
-	//MYSQL_ROW	STDCALL mysql_fetch_row(MYSQL_RES *result);
-	for(int index=0; index < row_num; index++){
-    	MYSQL_ROW _row = mysql_fetch_row(res);
-    	if(_row){
-    		int start = 0;
-    		for(; start < field_num; start++){
-				_out_data[index][start] = _row[start];
-    		}
-    	}
-	}
+	fd = mysql_fetch_field(res); 
+		field_name = fd->name;
+	
+	MYSQL_ROW	row= mysql_fetch_row(res);
+
+    //std::cout<<row[0]<<std::endl;
+    data = row[0];
 	return true;
 }
 
@@ -80,12 +76,12 @@ bool sql_connecter::insert_sql(const std::string &data)
 
 bool sql_connecter:: creat_table()
 {
-	std::string sql = "create table tianqi (id int primary key auto_increment,cityname varchar(30) NOT NULL,info varchar(1000) NOT NULL)charset utf8";
+	std::string sql = "create table tianqi (id int primary key auto_increment,cityname varchar(30) NOT NULL,info varchar(2000) NOT NULL)charset utf8";
 	if(mysql_query(mysql_base, sql.c_str()) == 0){
-		//std::cout<<"query success!"<<std::endl;
+		std::cout<<"create query success!"<<std::endl;
 		return true;
 	}else{
-		//std::cerr<<"query failed!"<<std::endl;
+		std::cerr<<"create query failed!"<<std::endl;
 		return false;
 	}
    
