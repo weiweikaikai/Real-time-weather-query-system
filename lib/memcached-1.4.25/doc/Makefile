@@ -141,18 +141,18 @@ NROFF = nroff
 MANS = $(man_MANS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/dormando/d/p/danga/git/memcached/missing aclocal-1.14
+ACLOCAL = ${SHELL} /home/weikai/myhttp/lib/memcached-1.4.25/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = ${SHELL} /home/dormando/d/p/danga/git/memcached/missing autoconf
-AUTOHEADER = ${SHELL} /home/dormando/d/p/danga/git/memcached/missing autoheader
-AUTOMAKE = ${SHELL} /home/dormando/d/p/danga/git/memcached/missing automake-1.14
+AUTOCONF = ${SHELL} /home/weikai/myhttp/lib/memcached-1.4.25/missing autoconf
+AUTOHEADER = ${SHELL} /home/weikai/myhttp/lib/memcached-1.4.25/missing autoheader
+AUTOMAKE = ${SHELL} /home/weikai/myhttp/lib/memcached-1.4.25/missing automake-1.14
 AWK = gawk
 CC = gcc -std=gnu99
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2 -pthread -pthread -Wall -Werror -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls
 CPP = gcc -E
-CPPFLAGS = 
+CPPFLAGS = -I/usr/local/libevent/include 
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -161,21 +161,21 @@ DTRACEFLAGS =
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
-EGREP = /bin/grep -E
+EGREP = /usr/bin/grep -E
 ENABLE_SASL = 
 EXEEXT = 
-GREP = /bin/grep
+GREP = /usr/bin/grep
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = 
+LDFLAGS = -L/usr/local/libevent/lib  -Wl,-rpath,/usr/local/libevent/lib
 LIBOBJS = 
 LIBS = -levent 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/dormando/d/p/danga/git/memcached/missing makeinfo
-MKDIR_P = /bin/mkdir -p
+MAKEINFO = ${SHELL} /home/weikai/myhttp/lib/memcached-1.4.25/missing makeinfo
+MKDIR_P = /usr/bin/mkdir -p
 OBJEXT = o
 PACKAGE = memcached
 PACKAGE_BUGREPORT = memcached@googlegroups.com
@@ -189,15 +189,15 @@ PROFILER = /usr/bin/gcov
 PROFILER_FLAGS = -fprofile-arcs -ftest-coverage
 PROFILER_LDFLAGS = -lgcov
 SET_MAKE = 
-SHELL = /bin/bash
+SHELL = /bin/sh
 STRIP = 
 VERSION = 1.4.25
 XML2RFC = no
 XSLTPROC = no
-abs_builddir = /home/dormando/d/p/danga/git/memcached/doc
-abs_srcdir = /home/dormando/d/p/danga/git/memcached/doc
-abs_top_builddir = /home/dormando/d/p/danga/git/memcached
-abs_top_srcdir = /home/dormando/d/p/danga/git/memcached
+abs_builddir = /home/weikai/myhttp/lib/memcached-1.4.25/doc
+abs_srcdir = /home/weikai/myhttp/lib/memcached-1.4.25/doc
+abs_top_builddir = /home/weikai/myhttp/lib/memcached-1.4.25
+abs_top_srcdir = /home/weikai/myhttp/lib/memcached-1.4.25
 ac_ct_CC = gcc
 am__include = include
 am__leading_dot = .
@@ -224,7 +224,7 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/dormando/d/p/danga/git/memcached/install-sh
+install_sh = ${SHELL} /home/weikai/myhttp/lib/memcached-1.4.25/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -233,7 +233,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local
+prefix = /usr/local/memcache
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -487,10 +487,10 @@ uninstall-man: uninstall-man1
 
 
 protocol-binary.txt: $(.TARGET:R).full
-	no -c /home/dormando/d/p/danga/git/memcached/doc $(.TARGET:R).full $@
+	no -c /home/weikai/myhttp/lib/memcached-1.4.25/doc $(.TARGET:R).full $@
 
 protocol-binary-range.txt: $(.TARGET:R).full
-	no -c /home/dormando/d/p/danga/git/memcached/doc $(.TARGET:R).full $@
+	no -c /home/weikai/myhttp/lib/memcached-1.4.25/doc $(.TARGET:R).full $@
 
 protocol-binary.full: $(.TARGET:R).xml xml2rfc/rfc2629-noinc.xsl
 	no --nonet xml2rfc/rfc2629-noinc.xsl $(.TARGET:R).xml > $@
