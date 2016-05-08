@@ -36,11 +36,11 @@ bool sql_connecter::select_sql(std::string &field_name,std::string &data,std::st
 	std::string sql = "SELECT info from tianqi where cityname='";
     sql+=cityname;
     sql+="'";
-    //std::cout<<sql<<std::endl;
+  //  std::cout<<sql<<std::endl;
 	if(mysql_query(mysql_base, sql.c_str()) == 0){
-	//	std::cout<<"query success!"<<std::endl;
+	//std::cout<<"find query success!"<<std::endl;
 	}else{
-	//	std::cerr<<"query failed!"<<std::endl;
+//	std::cerr<<"find query failed!"<<std::endl;
 	}
 	res = mysql_store_result(mysql_base);
 	int row_num = mysql_num_rows(res);
@@ -52,10 +52,13 @@ bool sql_connecter::select_sql(std::string &field_name,std::string &data,std::st
 		field_name = fd->name;
 	
 	MYSQL_ROW	row= mysql_fetch_row(res);
-
-    //std::cout<<row[0]<<std::endl;
+        if(row)
+        {
+  //  std::cout<<row[0]<<std::endl;
     data = row[0];
 	return true;
+        }
+        return false;
 }
 
 bool sql_connecter::insert_sql(const std::string &data)
@@ -64,12 +67,12 @@ bool sql_connecter::insert_sql(const std::string &data)
 	sql += "(";
 	sql +=data;
 	sql +=");";
-    std::cout<<sql.c_str()<<std::endl;
+//  std::cout<<sql.c_str()<<std::endl;
 	if(mysql_query(mysql_base, sql.c_str()) == 0){
-		std::cout<<"query success!"<<std::endl;
+//	std::cout<<"query success!"<<std::endl;
 		return true;
 	}else{
-		std::cerr<<"query failed!"<<std::endl;
+//	std::cerr<<"query failed!"<<std::endl;
 		return false;
 	}
 }
@@ -78,23 +81,23 @@ bool sql_connecter:: creat_table()
 {
 	std::string sql = "create table tianqi (id int primary key auto_increment,cityname varchar(30) NOT NULL,info varchar(2000) NOT NULL)charset utf8";
 	if(mysql_query(mysql_base, sql.c_str()) == 0){
-		std::cout<<"create query success!"<<std::endl;
+	//	std::cout<<"create query success!"<<std::endl;
 		return true;
 	}else{
-		std::cerr<<"create query failed!"<<std::endl;
+	//	std::cerr<<"create query failed!"<<std::endl;
 		return false;
 	}
    
 }
-bool  sql_connecter::delete_table(const std::string &table)
+bool  sql_connecter::delete_table()
 {
-	std::string sql = "drop table ";
-    sql+=table;
+	std::string sql = "drop table tianqi";
+    //sql+=table;
 	if(mysql_query(mysql_base, sql.c_str()) == 0){
-		//std::cout<<"query success!"<<std::endl;
+	//	std::cout<<" delete query success!"<<std::endl;
 		return true;
 	}else{
-		//std::cerr<<"query failed!"<<std::endl;
+	//	std::cerr<<"detete query failed!"<<std::endl;
 		return false;
 	}
 

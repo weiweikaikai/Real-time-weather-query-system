@@ -37,7 +37,7 @@ int main()
 	memset(post_data, '\0', sizeof(post_data));
 	cout<<"<html>"<<endl;
     cout<<"<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"/>"<<endl;
-	cout<<"<head> weather </head>"<<endl;
+	cout<<"<head> City_Weather </head>"<<endl;
     cout<<"</br>"<<endl;
 	cout<<"<body>"<<endl;
 	strcpy(method, getenv("REQUEST_METHOD"));
@@ -66,10 +66,24 @@ int main()
    std::string header;
    string sql_data;
    string city_name=(const char*)str;
-    cout<<"<p>"<<city_name<<"</p>";
-   conn.select_sql(header,sql_data,city_name);
+    //cout<<"<p>"<<city_name<<"</p>";
+   if(conn.select_sql(header,sql_data,city_name) )
   //  cout<<"<p>"<<header<<"</p>";
-   cout<<"<p>"<<sql_data<<"</p>";
+  for(int i=0;i<(int)sql_data.size();++i)
+  {
+   if(sql_data[i] == '#')
+   {
+   cout<<"</br>"<<endl;
+   }
+   else
+   {
+       cout<<sql_data[i];
+   }
+  }
+   else
+   {
+   cout<<"<p>not find</p>";
+   }
 
 	cout<<"</body>\n"<<endl;
 	cout<<"</html>\n"<<endl;

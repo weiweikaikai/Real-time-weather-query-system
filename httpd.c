@@ -450,6 +450,7 @@ int main(int argc,char* argv[])
 	//}
 //    short port = atoi(argv[2]);
   // const char* ip=argv[1];
+  daemon(1,1);
   short port =9000;
   const char *ip="121.42.180.114";
    int sock=0;

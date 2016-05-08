@@ -17,7 +17,7 @@ bool select_sql(std::string &field_name,std::string &data,std::string &cityname)
 
 		//bool updata_sql();
 		//bool delete_sql();
-		bool delete_table(const std::string &table);
+		bool delete_table();
 		bool creat_table();
 		//close remote link();
 		bool close_connect();

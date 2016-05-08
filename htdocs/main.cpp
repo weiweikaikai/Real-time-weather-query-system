@@ -23,6 +23,7 @@ int main()
        string nn="dfsdsa";
        string inf="ha";
        string data="'xian','hello weikai'";
+       conn.delete_table();
         conn.creat_table(); 
        conn.insert_sql(data);
     return 0;

@@ -279,7 +279,84 @@ int main()
      }
      free(resp);
      resp=NULL;
-    sort(weather_data.begin(),weather_data.end(),wea_cmp);
+
+     vector<string> city_name(51);
+
+     city_name[0]="%E9%9E%8D%E5%B1%B1";
+     city_name[1]="%E5%8C%97%E4%BA%AC";
+  city_name[2]="%E5%8C%97%E6%88%B4%E6%B2%B3";
+  city_name[3]="%E9%95%BF%E6%B2%99";
+  city_name[4]="%E9%87%8D%E5%BA%86";
+  city_name[5]="%E9%95%BF%E6%98%A5";
+  city_name[6]="%E5%A4%A7%E8%BF%9E+";
+  city_name[7]="%E5%A4%A7%E8%8D%94+";
+  city_name[8]="%E4%B8%9C%E8%8E%9E+";
+  city_name[9]="%E7%A6%8F%E5%B7%9E";
+  city_name[10]="%E4%BD%9B%E5%B1%B1";
+  city_name[11]="%E6%A1%82%E6%9E%97";
+city_name[12]="%E5%B9%BF%E5%B7%9E+";
+city_name[13]="%E6%A1%82%E9%98%B3";
+city_name[14]="%E8%B5%A3%E5%B7%9E";
+city_name[15]="+%E6%9D%AD%E5%B7%9E";
+city_name[16]="%E5%90%88%E8%82%A5";
+city_name[17]="%E6%B5%B7%E5%8F%A3";
+city_name[18]="%E8%A1%A1%E9%98%B3+";
+city_name[19]="%E5%93%88%E5%B0%94%E6%BB%A8";
+city_name[20]="%E4%B9%9D%E6%B1%9F";
+city_name[21]="%E6%B5%8E%E5%8D%97";
+city_name[22]="%E8%BF%9E%E4%BA%91%E6%B8%AF";
+city_name[23]="%E8%BF%9E%E4%BA%91%E6%B8%AF";
+city_name[24]="%E6%8B%89%E8%90%A8";
+city_name[25]="%E5%8D%97%E5%AE%81";
+city_name[26]="%E5%8D%97%E6%98%8C";
+city_name[27]="%E5%8D%97%E4%BA%AC";
+city_name[28]="%E5%8D%97%E9%80%9A";
+city_name[29]="%E5%AE%81%E6%B3%A2";
+city_name[30]="%E9%9D%92%E5%B2%9B";
+city_name[31]="%E6%97%A5%E7%85%A7";
+city_name[32]="%E6%B2%88%E9%98%B3+";
+city_name[33]="%E6%B7%B1%E5%9C%B3+";
+city_name[34]="%E4%B8%8A%E6%B5%B7+";
+city_name[35]="%E5%A4%AA%E5%8E%9F+";
+city_name[36]="%E5%A4%A9%E6%B4%A5";
+city_name[37]="%E4%B9%8C%E9%B2%81%E6%9C%A8%E9%BD%90+";
+city_name[38]="%E6%97%A0%E9%94%A1+";
+city_name[39]="%E6%AD%A6%E6%B1%89";
+
+     city_name[40]="%E8%A5%BF%E5%AE%89";
+     city_name[41]="%E8%A5%BF%E5%AE%81";
+     city_name[42]="%E5%BE%90%E5%B7%9E";
+     city_name[43]="%E6%89%AC%E5%B7%9E";
+     city_name[44]="%E9%83%91%E5%B7%9E";
+
+       string host = "127.0.0.1";
+       string user = "root";
+       string passwd = "WKyun123456";
+       string db = "test";
+
+       sql_connecter conn(host,user,passwd,db);
+       conn.begin_connect();
+       string lf="'";
+       string rf="'";
+       string d=",";
+       string blank=" ";
+       string bo="~";
+       string jing="#";
+       conn.delete_table();
+      conn.creat_table(); 
+       for(int j=0;j<45;++j)
+       {
+string data=lf+city_name[j]+rf+d;
+string info=lf+weather_data[j].name+jing;
+for(int  i=0;i<14;++i)
+{
+info+=weather_data[j].date[i]+blank+weather_data[j].name+blank+weather_data[j].weather[i]+blank+weather_data[j].low_degree[i]+bo+weather_data[j].high_degree[i]+jing;
+}
+data +=info;
+data+=rf;
+       conn.insert_sql(data);
+    }
+   sort(weather_data.begin(),weather_data.end(),wea_cmp);
 cout<<"\
 <!DOCTYPE html>\
 <html>\
@@ -356,6 +433,7 @@ color: #3385ff;\
         cout<<"<p>"<<weather_data[i].date[0]<<": "<<weather_data[i].name<<" "<<weather_data[i].weather[0]<<" "<<weather_data[i].low_degree[0]<<"~"<<weather_data[i].high_degree[0]<<"</p>"<<endl;
        }
        cout<<"</div> </div> <body> </html>"<<endl;
+
       
     return 0;  
 }        
