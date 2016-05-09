@@ -15,7 +15,7 @@ if (test "$1" = "start"); then
 	if (test "$PID" = ""); then
           ./myhttpd > log/log.conf
 	else
-		echo "myhttp is running"
+		echo "myhttpd is running"
 	fi
 	exit 0
 fi
@@ -29,9 +29,9 @@ fi
 
 if (test "$1" = "status"); then
 	if (test "$PID" = ""); then
-		echo "myhttp is not run"
+		echo "myhttpd is not run"
 	else
-		echo "myhttp is running"
+		echo "myhttpd is running"
 	fi
 	exit 0
 fi

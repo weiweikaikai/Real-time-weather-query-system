@@ -7,14 +7,14 @@
   int main(int argc,char *argv[])
   {
      //connect server
-    memcached_st *memc;
-  memcached_return rc;
+     memcached_st *memc;
+     memcached_return rc;
      memcached_server_st *server;
      time_t expiration;
      uint32_t  flags;
  
     memc = memcached_create(NULL);
-    server = memcached_server_list_append(NULL,"localhost",12000,&rc);
+    server = memcached_server_list_append(NULL,"localhost",11211,&rc);
      rc=memcached_server_push(memc,server);
      memcached_server_list_free(server);
 

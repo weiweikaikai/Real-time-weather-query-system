@@ -285,12 +285,12 @@ int main()
      city_name[0]="%E9%9E%8D%E5%B1%B1";
      city_name[1]="%E5%8C%97%E4%BA%AC";
   city_name[2]="%E5%8C%97%E6%88%B4%E6%B2%B3";
-  city_name[3]="%E9%95%BF%E6%B2%99";
+  city_name[3]="%E9%95%BF%E6%B2%99+";
   city_name[4]="%E9%87%8D%E5%BA%86";
   city_name[5]="%E9%95%BF%E6%98%A5";
   city_name[6]="%E5%A4%A7%E8%BF%9E+";
-  city_name[7]="%E5%A4%A7%E8%8D%94+";
-  city_name[8]="%E4%B8%9C%E8%8E%9E+";
+  city_name[7]="%E5%A4%A7%E8%8D%94";
+  city_name[8]="%E4%B8%9C%E8%8E%9E";
   city_name[9]="%E7%A6%8F%E5%B7%9E";
   city_name[10]="%E4%BD%9B%E5%B1%B1";
   city_name[11]="%E6%A1%82%E6%9E%97";
@@ -313,9 +313,9 @@ city_name[27]="%E5%8D%97%E4%BA%AC";
 city_name[28]="%E5%8D%97%E9%80%9A";
 city_name[29]="%E5%AE%81%E6%B3%A2";
 city_name[30]="%E9%9D%92%E5%B2%9B";
-city_name[31]="%E6%97%A5%E7%85%A7";
+city_name[31]="%E6%97%A5%E7%85%A7+";
 city_name[32]="%E6%B2%88%E9%98%B3+";
-city_name[33]="%E6%B7%B1%E5%9C%B3+";
+city_name[33]="%E6%B7%B1%E5%9C%B3";
 city_name[34]="%E4%B8%8A%E6%B5%B7+";
 city_name[35]="%E5%A4%AA%E5%8E%9F+";
 city_name[36]="%E5%A4%A9%E6%B4%A5";
@@ -356,7 +356,7 @@ data +=info;
 data+=rf;
        conn.insert_sql(data);
     }
-   sort(weather_data.begin(),weather_data.end(),wea_cmp);
+sort(weather_data.begin(),weather_data.end(),wea_cmp);
 cout<<"\
 <!DOCTYPE html>\
 <html>\

@@ -4,6 +4,7 @@
 #include<string.h>
 #include<iostream>
 #include"sql_connect.h"
+#include"memcache.h"
 using namespace std;
 
 void find(char * data_string,char str[])//data1=XXX&data2=YYY;
@@ -23,6 +24,23 @@ void find(char * data_string,char str[])//data1=XXX&data2=YYY;
 	}
     strcpy(str,data);
 }
+
+void show(string &sql_data)
+{
+     for(int i=0;i<(int)sql_data.size();++i)
+            {
+                if(sql_data[i] == '#')
+                  {
+                   cout<<"</br>"<<endl;
+                   }
+                else
+                   {
+                   cout<<sql_data[i];
+                  }
+         }
+
+}
+
 
 int main()
 {
@@ -66,25 +84,49 @@ int main()
    std::string header;
    string sql_data;
    string city_name=(const char*)str;
-    //cout<<"<p>"<<city_name<<"</p>";
-   if(conn.select_sql(header,sql_data,city_name) )
-  //  cout<<"<p>"<<header<<"</p>";
-  for(int i=0;i<(int)sql_data.size();++i)
-  {
-   if(sql_data[i] == '#')
-   {
-   cout<<"</br>"<<endl;
-   }
-   else
-   {
-       cout<<sql_data[i];
-   }
-  }
-   else
-   {
-   cout<<"<p>not find</p>";
-   }
+   // cout<<"<p>"<<city_name<<"</p>";
+    memcache mem(NULL);
+         
+   if(mem.MemcacheGet(city_name,sql_data))
+    {
+      //cout<<"memcache"<<endl;
+    //  cout<<sql_data<<endl;
+    show(sql_data);
+    }
+    else
+        {
+            string jia="+";
+            string tmp=city_name+jia;
+              if(mem.MemcacheGet(tmp,sql_data))
+              {
+                //cout<<"memcache"<<endl;
+                //  cout<<sql_data<<endl;
+                  show(sql_data);
+              }
+            else
+            {
+               if(conn.select_sql(header,sql_data,city_name) )
+               {
+                //cout<<"<p>"<<header<<"</p>";
+              mem.MemcacheSet(city_name,sql_data);
+              show(sql_data);
+               } 
+              else
+               { 
+                if(conn.select_sql(header,sql_data,tmp) )
+                 {
+                // cout<<"<p>"<<header<<"</p>";
+                mem.MemcacheSet(tmp,sql_data);
+                show(sql_data);
+                  }
+               else
+                {
+               cout<<"<p>not find</p>";
+                }
+               }
+            }
 
+       }
 	cout<<"</body>\n"<<endl;
 	cout<<"</html>\n"<<endl;
 }

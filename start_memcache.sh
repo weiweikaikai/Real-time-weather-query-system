@@ -12,7 +12,7 @@ fi
 
 if (test "$1" = "start"); then
 	if (test "$PID" = ""); then
-         /usr/local/memcache/bin/memcached -d -u root -m 256 -l 127.0.0.1 -p 12000 
+         /usr/local/memcache/bin/memcached -d -u root -m 256 -l 127.0.0.1 -p 11211 
 	else
 		echo "memcached is running"
 	fi

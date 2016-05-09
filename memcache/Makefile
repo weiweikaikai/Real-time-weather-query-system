@@ -1,5 +1,5 @@
-BIN=test
-SRC=test.cpp
+BIN=mem
+SRC=memcache.cpp
 FLAG=-g
 INCLUDE=-I/usr/local/libmemcached/include
 LIB=-L/usr/local/libmemcached/lib -lmemcached
