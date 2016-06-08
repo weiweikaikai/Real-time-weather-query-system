@@ -5,121 +5,10 @@
     > Created Time: Thu 03 Dec 2015 03:07:53 PM CST
  ************************************************************************/
 #include"commsocket.h"
+#include"threadpool.h"
+#include"epoll.h"
 
-int sckServer_init(const char*ip,short port, int *listenfd)
-{
-	int 	ret = 0;
-	int mylistenfd;
-	struct sockaddr_in servaddr;
-	memset(&servaddr, 0, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_port = htons(port);
-	servaddr.sin_addr.s_addr = inet_addr(ip);
-	
-		
-	mylistenfd = socket(PF_INET, SOCK_STREAM, 0);
-	if (mylistenfd < 0)
-	{
-		ret = errno ;
-		printf("func socket() err:%d \n", ret);
-		return ret;
-	}
-		
 
-	int on = 1;
-	ret = setsockopt(mylistenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );
-	if (ret < 0)
-	{
-		ret = errno ;
-		printf("func setsockopt() err:%d \n", ret);
-		return ret;
-	}
-	
-
-	ret = bind(mylistenfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
-	if (ret < 0)
-	{
-		ret = errno ;
-		printf("func bind() err:%d \n", ret);
-		return ret;
-	}
-		
-	ret = listen(mylistenfd, SOMAXCONN);
-	if (ret < 0)
-	{
-		ret = errno ;
-		printf("func listen() err:%d \n", ret);
-		return ret;
-	}
-		
-	*listenfd = mylistenfd;
-
-	return 0;
-}
-
-int accept_timeout(int fd, struct sockaddr_in *addr, unsigned int wait_seconds)
-{
-	int ret=0;
-	socklen_t addrlen = sizeof(struct sockaddr_in);
-
-	if (wait_seconds > 0)
-	{
-		fd_set accept_fdset;
-		struct timeval timeout;
-		FD_ZERO(&accept_fdset);
-		FD_SET(fd, &accept_fdset);
-		timeout.tv_sec = wait_seconds;
-		timeout.tv_usec = 0;
-		do
-		{
-			ret = select(fd + 1, &accept_fdset, NULL, NULL, &timeout);
-		} while (ret < 0 && errno == EINTR);
-		if (ret == -1)
-			return -1;
-		else if (ret == 0)
-		{
-			errno = ETIMEDOUT;
-			return -1;
-		}
-	}
-	if (addr != NULL)
-		ret = accept(fd, (struct sockaddr*)addr, &addrlen);
-	else
-		ret = accept(fd, NULL, NULL);
-		if (ret == -1)
-		{
-			ret = errno;
-			printf("func accept() err:%d \n", ret);
-			return ret;
-		}
-	return ret;
-}
-
-int sckServer_accept(int listenfd, int *connfd,  int timeout)
-{
-	int	ret = 0;
-    struct sockaddr_in peeraddr;
-	memset(&peeraddr,0,sizeof(peeraddr));
-	ret = accept_timeout(listenfd, &peeraddr, (unsigned int) timeout);
-	if (ret < 0)
-	{
-		if (ret == -1 && errno == ETIMEDOUT)
-		{
-			ret = Sck_ErrTimeOut;
-			printf("func accept_timeout() timeout err:%d \n", ret);
-			return ret;
-		}
-		else
-		{
-			ret = errno;
-			printf("func accept_timeout() err:%d \n", ret);
-			return ret;
-		}
-	}	
-	*connfd = ret;
-	printf("a client online ip= %s port= %d\n ", inet_ntoa(peeraddr.sin_addr),ntohs(peeraddr.sin_port));
-	return 0;
-}
 int  get_line(int sock,char*buf,size_t max_len)
 {
     if(buf == NULL || max_len <0) 
@@ -157,7 +46,7 @@ int  get_line(int sock,char*buf,size_t max_len)
 }
 void bad_request(int client)
 {}
-void  not_found(int client)
+void not_found(int client)
 {}
 void server_error(int client)
 {}
@@ -181,11 +70,9 @@ void echo_error_to_client()
 	 memset(echo_line,'\0',sizeof(echo_line));
      strncpy(echo_line,SERVICE_VERSION,strlen(SERVICE_VERSION)+1);
 	 strcat(echo_line," 200 OK\r\n");
-	 strcat(echo_line,"content-Type:text/html;Charset=utf-8");
-	 strcat(echo_line,"\r\n\r\n");
+	 strcat(echo_line,"content-Type:text/html;Charset=utf-8\r\n\r\n");
      send(client,echo_line,strlen(echo_line),0);
-	 send(client,"\r\n",strlen("\r\n"),0);
-     printf("%s\n",echo_line);
+     printf("service say: %s\n",echo_line);
 	 if(sendfile(client,in_fd,NULL,file_size) < 0)
 	 {
           close(in_fd);
@@ -204,6 +91,8 @@ void echo_error_to_client()
        ret=get_line(client,buf,sizeof(buf));
    }while(ret>0 && strcmp(buf,"\n" ) != 0);
 }
+
+
 void exe_cgi(int sock_client,const char*path,const char*method,const char*query_string)
 {
 	char buf[BUF_SIZE];
@@ -314,38 +203,35 @@ void exe_cgi(int sock_client,const char*path,const char*method,const char*query_
    }
 
 }
+
 void* accept_request(void *arg)
 {
-   printf("a clinet is oline........\n");
-   pthread_detach(pthread_self()); 
+
+   // pthread_detach(pthread_self()); //线程分离
 	int sock_client = (int)arg;
+
 	char buf[BUF_SIZE];
 	char method[BUF_SIZE/10];
 	char url[BUF_SIZE];
     char path[BUF_SIZE];
-	int cgi = 0;
-    char* query_string=NULL;
+
 	memset(buf,0,sizeof(buf));
 	memset(url,0,sizeof(url));
 	memset(method,0,sizeof(method));
 	memset(path,0,sizeof(path));
-//#ifdef _DEBUG_
-//	 while(get_line(sock_client,buf,sizeof(buf)) >0 )
-//	 {
-//             printf("%s\n",buf);
-//			 fflush(stdout);
-//	 }
-//     //     printf("\n");
-//#endif
-     if(get_line(sock_client,buf,sizeof(buf)) <0)
+
+		int cgi = 0;
+    char* query_string=NULL;
+
+     if(get_line(sock_client,buf,sizeof(buf)) < 0)
      {
 		 echo_error_to_client();
             return (void*)-1;
 	 }
-
-     printf("buf %s\n",buf);
+     printf("client say: %s\n",buf);
 	 int i=0;
 	 int j=0;//buf line index
+
 	 //get method
      while(!isspace(buf[j]) && i<sizeof(method)-1 && j<sizeof(buf)  )
 	 {
@@ -397,7 +283,7 @@ void* accept_request(void *arg)
 	 }
 
     struct stat st;
-	if( stat(path,&st) <0)//failed return not zero
+	if(stat(path,&st) <0)//failed return not zero
 	{
 		clear_header(sock_client);
 		 echo_error_to_client();
@@ -430,53 +316,105 @@ void* accept_request(void *arg)
 	return NULL;
 }
 
-void  print_log(const char*fun,int line,int errno,const  char*strerrno)
-{
-   printf("func [%s] line [%d] errno [%d] strerrno [%s] \n",fun,line,errno,strerrno);
-}
-
-
-
 void usage(const char* proc)
 {
       printf("uage %s [ip][port]\n",proc);
 }
 int main(int argc,char* argv[])
 {
-	//if(argc != 3)
-	//{
-     //usage(argv[0]);
-	 //exit(1);
-	//}
-//    short port = atoi(argv[2]);
-  // const char* ip=argv[1];
-  daemon(1,1);
-  short port =9000;
-  const char *ip="121.42.180.114";
-   int sock=0;
-    int  ret = sckServer_init(ip,port,&sock);
-	 if(ret != 0)
+	if(argc != 3)
+	{
+    usage(argv[0]);
+	 exit(1);
+	}
+    short port = atoi(argv[2]);
+    const char* ip=argv[1];
+    // daemon(1,1);
+     int listenfd = Server_init(ip,port);
+	 if(listenfd < 0)
 	 {
-		 printf("func sckServer_init\n");
-		 return ret;
+		 printf("func Server_init  err\n");
+		 return -1;
 	 }
+	 activate_nonblock(listenfd);
+	 int epfd=My_epoll_create(0);//这里可以加类似于EPOLL_CLOEXEC的fd属性值
+	 struct epoll_event event;
+
+	 event.data.fd= listenfd;
+	 event.events = EPOLLIN | EPOLLET;
+	 My_epoll_add(epfd,listenfd,&event);
+      
+    threadpool_t *tp = threadpool_init(5);
+
+     int timeout=-1;
+      int count=0;
 	while(1)
 	{
-		int wait_second =10;
-		int conn=0;
-        ret =sckServer_accept(sock,&conn,wait_second);
-		  if( ret == Sck_ErrTimeOut)
-		  {
-			  printf("timeout......");
-              continue;
-		  }
-		  pthread_t new_thread;
-		 int ret = pthread_create( &new_thread,NULL,accept_request,conn);
-               if(ret < 0)
-			   { 
-			   }
+		
+		int activenum=My_epoll_wait(epfd,events,MAXEVENTS,timeout);
+		if(activenum < 0)
+		{
+		     printf("epoll_wait error\n");
+			 break;
+		}
+		if(activenum == 0)
+		{
+		    printf("epoll_wait timeout\n");
+			continue;
+		}
+		int i=0;
+		for(;i<activenum;++i)
+		{
+		  int fd =events[i].data.fd;
+		  if(listenfd == fd)
+			{
+		       int conn=0;
+			   while(1)
+				{
+				     struct sockaddr_in clientaddr;
+					 socklen_t len = sizeof(clientaddr);
+	                 memset(&clientaddr, 0, sizeof(clientaddr));
+			          conn = accept(listenfd, (struct sockaddr *)&clientaddr, &len);
+                    if (conn < 0) 
+						{
+                           if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+							{
+							   //处理了所有输入连接
+                               break;
+                            } else{
+								printf("accept error\n");
+                                break;
+                            }   
+			             }
+						 ++count;
+					printf("%d  a client online ip= %s port= %d\n ",count, inet_ntoa(clientaddr.sin_addr),ntohs(clientaddr.sin_port));
+				    activate_nonblock(conn);
+					event.data.fd = conn;
+					event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
+					My_epoll_add(epfd, conn, &event);
+		         }
+				 
+		     }else{
+			          if ((events[i].events & EPOLLERR) ||
+                          (events[i].events & EPOLLHUP) ||
+                          (!(events[i].events & EPOLLIN))) 
+					    {
+                          printf("error fd\n");
+                          close(fd);
+                          continue;
+                        }
+			           if(threadpool_add(tp,accept_request,events[i].data.fd) != 0)
+				         {
+					          printf("threadpool_add error\n");
+					     }
+			  }
+	     }
 	}
-    
-return  0;
+       if (threadpool_destroy(tp,0) < 0)
+		   {
+              printf("destroy threadpool failed");
+            }
+
+        return  0;
 }
 

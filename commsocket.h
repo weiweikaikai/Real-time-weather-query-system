@@ -1,7 +1,5 @@
-
-
-#ifndef _SCK_CLINT_H_
-#define _SCK_CLINT_H_
+#ifndef _COMMSOCKET_H_
+#define _COMMSOCKET_H_
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -23,8 +21,6 @@ extern 'C'
 {
 #endif
 
-
-
 //错误码定义  
 
 #define Sck_Ok             	0
@@ -38,36 +34,20 @@ extern 'C'
 #define BACK_LOG 5
 #define BUF_SIZE 1024
 #define MAIN_PAGE "index.html"
-#define SERVICE_VERSION "HTTP/1.0"
-
-//函数声明
-//客户端环境初始化
-int sckCliet_init(void **handle);
-int sckCliet_getconn(void *handle, char *ip, int port, int *connfd,int contime);
-int sckCliet_closeconn(int connfd);
-//客户端发送报文
-int sckClient_send(void *handle, int  connfd,  unsigned char *data, int datalen,int sendtime);
-//客户端端接受报文
-int sckClient_rev(void *handle, int  connfd, unsigned char *out, int *outlen,int recvtime); //1
-
-// 客户端环境释放 
-int sckClient_destroy(void *handle);
-
+#define SERVICE_VERSION "HTTP/1.1"
 
 
 //函数声明
 //服务器端初始化
-int sckServer_init(const char* ip,short port, int *listenfd);
-
-int sckServer_accept(int listenfd, int *connfd,  int timeout);
+int Server_init(const char* ip,unsigned short port);
+//服务器接受连接
+int Server_accept(int listenfd,int timeout);
 //服务器端发送报文
-int sckServer_send(int connfd,  unsigned char *data, int datalen, int timeout);
+int Server_send(int connfd,  unsigned char *data, int datalen, int timeout);
 //服务器端端接受报文
-int sckServer_rev(int  connfd, unsigned char *out, int *outlen,  int timeout); //1
+int Server_rev(int  connfd, unsigned char *out, int *outlen,  int timeout); 
 
-//服务器端环境释放 
-int sckServer_destroy(void *handle);
-
+ int activate_nonblock(int fd);
 
 
 #ifdef __cpluspluse

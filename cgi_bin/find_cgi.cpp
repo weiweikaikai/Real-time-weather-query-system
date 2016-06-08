@@ -41,6 +41,18 @@ void show(string &sql_data)
 
 }
 
+void ParseStr(char*str)
+{
+    int index=0;
+	for(int i=0;i<strlen(str)+1;++i)
+	{
+          if(str[i] != '%')
+		  {
+			  str[index++]=str[i];
+		  }
+	}
+}
+
 
 int main()
 {
@@ -56,13 +68,16 @@ int main()
 	cout<<"<html>"<<endl;
     cout<<"<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"/>"<<endl;
 	cout<<"<head> City_Weather </head>"<<endl;
+     cout<<"<title> 未来两周天气</title> "<<endl;
     cout<<"</br>"<<endl;
 	cout<<"<body>"<<endl;
 	strcpy(method, getenv("REQUEST_METHOD"));
-	if( strcasecmp("GET", method) == 0 ){
+	if( strcasecmp("GET", method) == 0 )
+	{
 		strcpy(query_string, getenv("QUERY_STRING"));
         find((char*)query_string,str);//data1=XXX&data2=YYY;
-	}else if( strcasecmp("POST", method) == 0 ){
+	}
+	else if( strcasecmp("POST", method) == 0 ){
 		content_length = atoi(getenv("CONTENT_LENGTH"));
 		int i = 0; 
 		for(; i < content_length; i++ ){
@@ -83,13 +98,14 @@ int main()
     conn.begin_connect();
    std::string header;
    string sql_data;
+   ParseStr(str);
    string city_name=(const char*)str;
-   // cout<<"<p>"<<city_name<<"</p>";
+    //cout<<"<p>"<<city_name<<"</p>";
     memcache mem(NULL);
-         
+    string city;
    if(mem.MemcacheGet(city_name,sql_data))
     {
-      //cout<<"memcache"<<endl;
+    // cout<<"memcache"<<endl;
     //  cout<<sql_data<<endl;
     show(sql_data);
     }
@@ -99,25 +115,27 @@ int main()
             string tmp=city_name+jia;
               if(mem.MemcacheGet(tmp,sql_data))
               {
-                //cout<<"memcache"<<endl;
+                //cout<<" tmp memcache"<<endl;
                 //  cout<<sql_data<<endl;
                   show(sql_data);
               }
             else
             {
-               if(conn.select_sql(header,sql_data,city_name) )
+               if(conn.select_sql(header,sql_data,city_name))
                {
                 //cout<<"<p>"<<header<<"</p>";
-              mem.MemcacheSet(city_name,sql_data);
-              show(sql_data);
+                //cout<<"sql"<<endl;
+                  show(sql_data);
+                  mem.MemcacheSet(city_name,sql_data);
                } 
               else
                { 
                 if(conn.select_sql(header,sql_data,tmp) )
                  {
                 // cout<<"<p>"<<header<<"</p>";
-                mem.MemcacheSet(tmp,sql_data);
+                //cout<<"tmp sql"<<endl;
                 show(sql_data);
+                mem.MemcacheSet(tmp,sql_data);
                   }
                else
                 {
@@ -127,6 +145,8 @@ int main()
             }
 
        }
-	cout<<"</body>\n"<<endl;
+
+
+      cout<<"</body>\n"<<endl;
 	cout<<"</html>\n"<<endl;
 }

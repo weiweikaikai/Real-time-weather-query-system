@@ -13,7 +13,9 @@ fi
 
 if (test "$1" = "start"); then
 	if (test "$PID" = ""); then
-          ./myhttpd > log/log.conf
+           ./start_memcache.sh start
+           ./start_mysql.sh    start
+          ./myhttpd 121.42.180.114 9000
 	else
 		echo "myhttpd is running"
 	fi
@@ -23,16 +25,20 @@ fi
 if (test "$1" = "stop"); then
 	if (test "$PID" != ""); then
 		kill -s 2 $PID
+	   ./start_memcache.sh stop
+           ./start_mysql.sh    stop
 	fi
 	exit 0
 fi
 
 if (test "$1" = "status"); then
 	if (test "$PID" = ""); then
-		echo "myhttpd is not run"
+		echo "myhttpd is not running"
 	else
 		echo "myhttpd is running"
 	fi
+	./start_memcache.sh status
+        ./start_mysql.sh    status
 	exit 0
 fi
 

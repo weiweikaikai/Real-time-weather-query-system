@@ -16,10 +16,10 @@ sql_connecter::sql_connecter(const std::string &_host,\
 bool sql_connecter::begin_connect()
 {
 	if( mysql_real_connect(mysql_base, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), 3306, NULL, 0) == NULL){
-//		std::cerr<<"connect error"<<std::endl;
+	//std::cerr<<"connect error"<<std::endl;
 		return false;
 	}else{
-//		std::cout<<"connect done..."<<std::endl;
+		//std::cout<<"connect done..."<<std::endl;
 	}
 	return true;
 }
@@ -36,27 +36,29 @@ bool sql_connecter::select_sql(std::string &field_name,std::string &data,std::st
 	std::string sql = "SELECT info from tianqi where cityname='";
     sql+=cityname;
     sql+="'";
-  //  std::cout<<sql<<std::endl;
-	if(mysql_query(mysql_base, sql.c_str()) == 0){
-	//std::cout<<"find query success!"<<std::endl;
-	}else{
-//	std::cerr<<"find query failed!"<<std::endl;
+    //std::cout<<sql<<std::endl;
+	if(mysql_query(mysql_base, sql.c_str()) == 0)
+	{
+	   // std::cout<<"find query success!"<<std::endl;
+	}
+	else
+	{
+	   // std::cerr<<"find query failed!"<<std::endl;
 	}
 	res = mysql_store_result(mysql_base);
 	int row_num = mysql_num_rows(res);
 	int field_num = mysql_num_fields(res);
-
      //std::cout<<row_num<<field_num<<std::endl;
 	MYSQL_FIELD *fd = NULL;
 	fd = mysql_fetch_field(res); 
-		field_name = fd->name;
-	
-	MYSQL_ROW	row= mysql_fetch_row(res);
+	field_name = fd->name;
+
+	MYSQL_ROW row= mysql_fetch_row(res);
         if(row)
         {
-  //  std::cout<<row[0]<<std::endl;
-    data = row[0];
-	return true;
+        // std::cout<<row[0]<<std::endl;
+           data = row[0];
+	        return true;
         }
         return false;
 }
@@ -67,12 +69,12 @@ bool sql_connecter::insert_sql(const std::string &data)
 	sql += "(";
 	sql +=data;
 	sql +=");";
-//  std::cout<<sql.c_str()<<std::endl;
+  //std::cout<<sql.c_str()<<std::endl;
 	if(mysql_query(mysql_base, sql.c_str()) == 0){
-//	std::cout<<"query success!"<<std::endl;
+	//std::cout<<"insert  success!"<<std::endl;
 		return true;
 	}else{
-//	std::cerr<<"query failed!"<<std::endl;
+//	std::cerr<<"insert failed!"<<std::endl;
 		return false;
 	}
 }

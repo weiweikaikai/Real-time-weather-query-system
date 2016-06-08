@@ -9,11 +9,7 @@ $(BIN):$(SRC)
 
 .PHONY:output
 output:
-	#cp debug_cgi ../output/htdocs/cgi_bin 
 	cp find_cgi ../htdocs/cgi_bin 
-	#cp show_student_cgi ../output/htdocs/cgi_bin
-	#cp register_cgi ../output/htdocs/cgi_bin
-
 .PHONY:clean
 clean:
 	rm -rf  find_cgi
